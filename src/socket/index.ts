@@ -5,7 +5,7 @@ type JoinRoomPayload = {
   room: string;
 }
 type ChatPayload = {
-  room: string;
+  roomId: string;
   body: string;
 }
 
@@ -28,11 +28,19 @@ export default function createSocket(server: http.Server) {
       console.log("socket is joined room ", room)
     })
 
-    socket.on("client-send-message", (payload: ChatPayload) => {
-      const {room, body} = payload
-      console.log("--->", room)
-      console.log("--->", body)
-      chatNsp.in(room).emit("server-send-message", body)
+    socket.on("client-send-message", (payload: ChatPayload, cb) => {
+      const {roomId, body} = payload
+
+      const message = {
+        id: (Math.random() * 10000).toString(),
+        body: body,
+        createdAt: new Date(),
+        roomId: roomId,
+        userId: "1"
+      }
+
+      chatNsp.in(roomId).emit("server-send-message", message)
+      cb()
     })
 
 
