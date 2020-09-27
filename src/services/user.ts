@@ -21,6 +21,10 @@ async function create(payload: UserGooglePayloadDto) {
   }
 }
 
+async function findAll() {
+  const userRepository = getRepository(User)
+  return userRepository.find({select: ["id", "firstName", "lastName", "avatar"]})
+}
 
 async function findUserById(id: string) {
   try {
@@ -44,7 +48,6 @@ async function findUserByEmail(email: string) {
   return user
 }
 
-
 async function findOrCreate(payload: UserGooglePayloadDto) {
   try {
     if (!payload.email) {
@@ -63,6 +66,7 @@ async function findOrCreate(payload: UserGooglePayloadDto) {
 
 export default {
   create,
+  findAll,
   findUserByEmail,
   findOrCreate,
   findUserById

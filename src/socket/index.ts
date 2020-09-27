@@ -15,7 +15,7 @@ export default function createSocket(server: http.Server) {
   const chatNsp = io.of("/chat")
   // middleware
   chatNsp.use((socket, next) => {
-    // console.log("middleware is called", socket.handshake.query)
+    console.log("middleware is called", socket.handshake.query)
     next()
   })
 

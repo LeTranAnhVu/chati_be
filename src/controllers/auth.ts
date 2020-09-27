@@ -9,7 +9,7 @@ import ApiError, {
 import {genAccessToken, verifyToken} from "../util/token"
 
 import userService from "../services/user"
-import { User } from "../entity/User"
+import {User} from "../entity/User"
 
 export function formatGoogleTokenMdl(
   req: Request,

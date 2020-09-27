@@ -1,8 +1,9 @@
 import {Router} from "express"
-import {fetchRoomById} from "../controllers/room"
+import {getOrCreateRoomByUserId, getRoomById} from "../controllers/room"
 
 const router = Router()
 
-router.get("/:id", fetchRoomById)
+router.get("/:id", getRoomById)
+router.get("/users/:userId", getOrCreateRoomByUserId)
 
 export default router

@@ -1,9 +1,10 @@
 import {Request, Response, NextFunction} from "express"
 import * as faker from "faker"
 import {RoomModel} from "index"
+import {BadRequestError} from "../helpers/apiError"
 
 
-export function fetchRoomById(req: Request, res: Response, next: NextFunction) {
+export function getRoomById(req: Request, res: Response, next: NextFunction) {
   const {id: roomId} = req.params
 
   const room: RoomModel = {
@@ -29,4 +30,15 @@ export function fetchRoomById(req: Request, res: Response, next: NextFunction) {
     })
   }
   return res.json(room)
+}
+
+
+
+export function getOrCreateRoomByUserId(req: Request, res: Response, next: NextFunction) {
+  const {userId} = req.params
+
+  const room = {
+    id: faker.random.uuid(),
+ }
+ return res.json(room)
 }
