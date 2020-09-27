@@ -14,7 +14,6 @@ type TokenPayload = {
   email?: string
   iat?: number
   exp?: number
-  role?: string
 }
 
 // declare module 'express-custom'
