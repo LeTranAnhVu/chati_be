@@ -1,5 +1,7 @@
-import {Column, Entity} from "typeorm"
+import {Column, Entity, JoinTable, ManyToMany, OneToMany} from "typeorm"
 import {BaseEntity} from "../Base.entity"
+import {Room} from "./Room"
+import {RoomToUser} from "./RoomToUser"
 
 
 @Entity("users")
@@ -18,4 +20,7 @@ export class User extends BaseEntity {
 
   @Column({name: "avatar", default: ""})
   avatar: string
+
+  @OneToMany(() => RoomToUser, roomToUser => roomToUser.room)
+  roomToUsers: RoomToUser[]
 }

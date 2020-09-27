@@ -1,44 +1,29 @@
 import {Request, Response, NextFunction} from "express"
-import * as faker from "faker"
-import {RoomModel} from "index"
-import {BadRequestError} from "../helpers/apiError"
+import roomService from "../services/room"
+import {NotFoundError} from "../helpers/apiError"
+import {User} from "../entity/User"
 
 
-export function getRoomById(req: Request, res: Response, next: NextFunction) {
+export async function getRoomById(req: Request, res: Response, next: NextFunction) {
   const {id: roomId} = req.params
+  try {
+    const loggingUser = req.user as User
+    const foundRoom = await roomService.findOne(roomId, loggingUser.id)
 
-  const room: RoomModel = {
-    id: roomId,
-    users: [
-      {
-        id: "1",
-        name: "brian"
-      },
-      {
-        id: "2",
-        name: "tram"
-      }
-    ],
-    messages: []
+    return res.json(foundRoom)
+  } catch (e) {
+    next(new NotFoundError("Cannot found room", e))
   }
-  for (let i = 1; i <= 30; i++) {
-    room.messages.push({
-      id: faker.random.uuid(),
-      body: faker.lorem.sentence(),
-      roomId: "1",
-      userId: Math.round(Math.random()) ? "1" : "2"
-    })
-  }
-  return res.json(room)
 }
 
 
-
-export function getOrCreateRoomByUserId(req: Request, res: Response, next: NextFunction) {
+export async function getOrCreateRoomByUserId(req: Request, res: Response, next: NextFunction) {
   const {userId} = req.params
-
-  const room = {
-    id: faker.random.uuid(),
- }
- return res.json(room)
+  const {id: logginedUserId} = req.user as User
+  try {
+    const room = await roomService.findOrCreateOneByUserId(userId, logginedUserId)
+    return res.json({id: room.id})
+  } catch (e) {
+    next(new NotFoundError("cannot get or create room"))
+  }
 }
