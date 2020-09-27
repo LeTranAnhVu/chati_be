@@ -11,6 +11,8 @@ import routerV1 from "./routers/v1"
 import apiErrorHandler from "./middlewares/apiErrorHandler"
 import connectDatabase from "./config/database"
 import {googleTokenStrategyFactory} from "./config/passport"
+import {authenticateAccessTokenMdl, parseTokenMdl} from "./controllers/auth"
+import unless from "./util/unless"
 
 // Create Express server
 const app = express()
@@ -34,9 +36,16 @@ app.use(
   express.static(path.join(__dirname, "public"), {maxAge: 31557600000})
 )
 
+
+const excludedPaths = [
+  /v1\/auth\/google/,
+]
+
+
 // setup passport strategies
 passport.use(googleTokenStrategyFactory())
-
+app.use(parseTokenMdl)
+app.use("/api", unless(excludedPaths,  authenticateAccessTokenMdl))
 // Use router
 app.use("/api/v1", routerV1)
 

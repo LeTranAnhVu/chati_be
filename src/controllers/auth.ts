@@ -1,9 +1,5 @@
 import {NextFunction, Request, Response} from "express"
 import ApiError, {
-  BadRequestError,
-  ForbiddenError,
-  InternalServerError,
-  NotFoundError,
   UnauthorizedError
 } from "../helpers/apiError"
 import {genAccessToken, verifyToken} from "../util/token"
@@ -40,12 +36,21 @@ export function generateAccessTokenMdl(
   }
 }
 
-export async function authenticateAccessTokenMdl(
+export function parseTokenMdl(
   req: Request,
   res: Response,
+  next: NextFunction) {
+  const token = req.header("Authorization")?.replace("Bearer ", "")
+  req.accessToken = token
+  next()
+}
+
+export async function authenticateAccessTokenMdl(
+  req: Request,
+  res: Response | {},
   next: NextFunction
 ) {
-  const token = req.header("Authorization")?.replace("Bearer ", "")
+  const token = req.accessToken
   const decodedPayload = verifyToken(token)
   try {
     if (!decodedPayload) {

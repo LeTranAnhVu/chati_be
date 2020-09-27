@@ -1,5 +1,9 @@
 import socketio from "socket.io"
 import http from "http"
+import {authenticateAccessTokenMdl} from "../controllers/auth"
+import {getRepository} from "typeorm"
+import {Room} from "../entity/Room"
+import {Message} from "../entity/Message"
 
 type JoinRoomPayload = {
   room: string;
@@ -15,8 +19,9 @@ export default function createSocket(server: http.Server) {
   const chatNsp = io.of("/chat")
   // middleware
   chatNsp.use((socket, next) => {
-    console.log("middleware is called", socket.handshake.query)
-    next()
+    const {token} = socket.handshake.query
+    socket.request.accessToken = token
+    return authenticateAccessTokenMdl(socket.request, {}, next)
   })
 
   chatNsp.on("connection", (socket) => {
@@ -28,16 +33,19 @@ export default function createSocket(server: http.Server) {
       console.log("socket is joined room ", room)
     })
 
-    socket.on("client-send-message", (payload: ChatPayload, cb) => {
+    socket.on("client-send-message", async (payload: ChatPayload, cb) => {
       const {roomId, body} = payload
-
-      const message = {
-        id: (Math.random() * 10000).toString(),
-        body: body,
-        createdAt: new Date(),
-        roomId: roomId,
-        userId: "1"
+      const roomRepository = getRepository(Room)
+      const messRepository = getRepository(Message)
+      const foundRoom = (await roomRepository.find({where: {id: roomId}}))[0]
+      if(!foundRoom) {
+        console.log("can not save message")
       }
+      const message = new Message()
+      message.body = body
+      message.user = socket.request.user
+      message.room = foundRoom
+      await messRepository.save(message)
 
       chatNsp.in(roomId).emit("server-send-message", message)
       cb()

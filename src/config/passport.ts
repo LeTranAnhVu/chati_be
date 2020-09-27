@@ -2,7 +2,7 @@ import GoogleTokenStrategy from "passport-google-id-token"
 
 import {GOOGLE_CLIENT_ID} from "../util/secrets"
 import userService from "../services/user"
-import {UserGooglePayloadDto} from "../Dto/UserGooglePayloadDto"
+import {UserGooglePayloadDto} from "../dto/UserGooglePayloadDto"
 
 export function googleTokenStrategyFactory() {
   return new GoogleTokenStrategy(

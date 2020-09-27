@@ -3,7 +3,7 @@ import {Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn} from
 
 export abstract class BaseEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: number
+  id: string
 
   @CreateDateColumn({name: "created_at"})
   createdAt: Date

@@ -4,7 +4,7 @@ import {
 } from "../helpers/apiError"
 import {getRepository} from "typeorm"
 import {User} from "../entity/User"
-import {UserGooglePayloadDto} from "../Dto/UserGooglePayloadDto"
+import {UserGooglePayloadDto} from "../dto/UserGooglePayloadDto"
 
 async function create(payload: UserGooglePayloadDto) {
   try {
